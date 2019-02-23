@@ -1,0 +1,89 @@
+---
+title: "test-opti-png"
+author: "John Minter"
+date: "2018-02-16"
+output:
+  html_document:
+    keep_md: true
+    variant: github_md
+    toc: true
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(ggplot2)
+knit_hooks$set(optipng = hook_optipng)
+knit_hooks$set(pngquant = hook_pngquant)
+```
+
+# Load a spectrum
+
+First we get our exemplar **.msa** format spectrum file. I had included
+the file in the `rEDS` package. We will suppress the messages where R
+has loaded the required packages by using the optional `quietly` 
+variable.
+
+```{r}
+library(rEDS, quietly=TRUE)
+fi <- system.file("extdata", "Benitoite.msa", package = "rEDS")
+print(fi)
+```
+
+Next, we create a Spectrum object using the `SingleMSA` function.
+You can get the help page by typing `??rEDS::singleMSA` into the
+R console.
+
+```{r, message=FALSE}
+spc <- singleMSA(fi, probecur=2.5)
+```
+
+and now we can plot the spectrum.
+
+```{r, fig.width=7}
+plot(spc, maxEnergy=10000, doLog=TRUE, optipng = '-o7')
+```
+
+We can also create a ggplot with a linear intensity scale. You can
+get the help page by typing `??rEDS::ggplotSpectrumLinY` into the 
+R console.
+
+```{r, fig.width=7, optipng = '-o7'}
+plt <- ggplotSpectrumLinY(fi, "Benitoite", 0.2, 7.0, 1.0, 2.5)
+print(plt)
+```
+
+next we will make a plot with a logarithmic intensity
+
+```{r, fig.width=7, optipng = '-o7'}
+plt <-ggplotSpectrumLogY(fi, "Benitoite", 0.2, 7.0, 1.0, 2.5)
+print(plt)
+```
+
+# To preview in Sublime Text 3
+
+0. Install [MarkdownLivePreview](https://github.com/math2001/MarkdownLivePreview)
+   I had to do this using git:
+
+```
+$ cd "%APPDATA%\Sublime Text 3\Packages"             # on Windows
+$ cd ~/Library/Application\ Support/Sublime\ Text\ 3 # on Mac
+$ cd ~/.config/sublime-text-3                        # on Linux
+
+$ git clone "https://github.com/math2001/MarkdownLivePreview"
+```
+
+1. `Ctl+Shift+P` to get the `Command Pallette`
+2. Go down to `Markdown Preview: Preview in Browser` and click
+3. Choose either `markdown` or `github`.
+
+# Sources of info
+
+1. [www.zevross.com](https://www.zevross.com/blog/2017/06/19/tips-and-tricks-for-working-with-images-and-figures-in-r-markdown-documents/): Tips and tricks for working with images and figures in R Markdown documents.
+
+2. [rforge.net](https://www.rforge.net/doc/packages/knitr/chunk_hook.html): Built-in chunk hooks to extend knitr.
+
+3. [optipng.sourceforge.net](http://optipng.sourceforge.net/): The OptiPng home page.
+
+4. [Yihui Xie, Dynamic Documents with R and knitr, Second Edition, Section 10.24](https://books.google.com/books?id=fyIuDwAAQBAJ&pg=PT130&lpg=PT130&dq=R+optipng+example&source=bl&ots=QGT_81jnc_&sig=g8l-VrVUDFzlxjU30BL7S7fXt5w&hl=en&sa=X&ved=0ahUKEwjR9di78avZAhVG7YMKHTsPCcoQ6AEIgwEwCA#v=onepage&q=Optimize%20PNG%20Plots&f=false): Yihui's example with OpiPng.
+
