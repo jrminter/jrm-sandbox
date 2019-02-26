@@ -1,0 +1,66 @@
+---
+title: "Slides in Rmarkdown"
+subtitle: "Using xaringan"
+author: "John Minter"
+date: "2019/01/15 (updated: `r Sys.Date()`)"
+output:
+  xaringan::moon_reader:
+    css: ["default", "css/sfah.css", "css/fonts.css"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "16:9"
+      beforeInit: "https://platform.twitter.com/widgets.js"
+    seal: false 
+    includes:
+      in_header: header.html
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(knitr)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+# options(knitr.table.format = "html")
+library(tidyverse)
+library(babynames)
+library(fontawesome) # from github: https://github.com/rstudio/fontawesome
+library(DiagrammeR)
+```
+
+layout: true
+  
+<div class="my-footer"><span>arm.rbind.io/slides/xaringan</span></div>
+
+<!-- this adds the link footer to all slides, depends on my-footer class in css-->
+
+---
+name: xaringan-title
+class: left, middle
+# background-image: url(img/brooke-lark-500141-unsplash.jpg)
+# background-size: cover
+
+# Meet LCS Stats
+
+<img src="./img/lcs-stats.png" alt="LCS Stats" width="180" />
+
+### .fancy[Making slides in R Markdown]
+
+.large[Alison Hill | rstudio::conf | `r Sys.Date()`]
+
+<!-- this ends up being the title slide since seal = FALSE-->
+
+---
+class: middle, inverse
+
+.left-column[
+
+# `r emo::ji("confused")`
+
+]
+
+.right-column[
+# /ʃæ.'riŋ.ɡæn/
+]
+
