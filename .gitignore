@@ -6,3 +6,7 @@
 *.md
 *.html
 *_files
+
+test-bootstrap-themes/*_cache
+test-bootstrap-themes/*.pdf
+test-bootstrap-themes/*.log

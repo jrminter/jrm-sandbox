@@ -1,0 +1,21 @@
+---
+title: "Habits" 
+output:   
+    html_document     
+---
+
+```{r}
+rmdformats::readthedown(fig_width = 8, fig_height = 5, fig_caption = TRUE,
+  highlight = "kate", lightbox = FALSE, thumbnails = FALSE,
+  gallery = FALSE, pandoc_args = NULL, toc_depth = 2,
+  mathjax = "rmdformats", use_bookdown = FALSE, ...)
+
+```
+
+# Intro
+
+Some text
+
+## Second level
+
+More text
