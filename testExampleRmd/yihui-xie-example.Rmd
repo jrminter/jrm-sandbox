@@ -1,0 +1,16 @@
+---
+title: "A Simple Regression"
+author: "Yihui Xie"
+output:
+  html_document:
+    toc: true
+---
+We built a linear regression model.
+
+```{r}
+fit <- lm(dist ~ speed, data = cars)
+b   <- coef(fit)
+plot(fit)
+```
+
+The slope of the regression is `r b[1]`.
