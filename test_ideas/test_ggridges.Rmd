@@ -1,0 +1,55 @@
+---
+title: "Test ggridges"
+author: "John Minter"
+date: "4/29/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = NA)
+```
+
+First, load the libraries and set a path to save the plot. In this case,
+the weather data, `lincoln_weather`, comes from the `ggridges` package.
+The `here` package makes it easy to deal with file paths. The `ggplot2`
+packages lets us build up a plot.
+
+```{r loadLibaries, message=FALSE}
+library(ggplot2)
+library(ggridges)
+library(here)
+
+pa <- here::here()
+fi <- paste0(pa, "/plt/lincoln_nebraska_weather.png")
+```
+
+Here we use ggplot to plot the mean temperature [F] as the x-axis,
+the month as the Y axis, and filling using the `stat()` called with
+the x value (mean temperature). The plot will automatically render
+in the output report.
+
+```{r makePlot, fig.align = 'center'}
+plt <- ggplot(lincoln_weather,
+              aes(x = `Mean Temperature [F]`,
+                  y = Month, fill = stat(x))) +
+       geom_density_ridges_gradient(scale = 3,
+                                    rel_min_height = 0.01,
+                                    gradient_lwd = 1.) +
+       scale_x_continuous(expand = c(0, 0)) +
+       scale_y_discrete(expand = expansion(mult = c(0.01, 0.25))) +
+       scale_fill_viridis_c(name = "Temp. [F]", option = "C") +
+       labs(title = 'Temperatures in Lincoln NE',
+            subtitle = 'Mean temperatures (Fahrenheit) by month for 2016') +
+      theme_ridges(font_size = 13, grid = TRUE) + 
+      theme(axis.title.y = element_blank())
+
+plt
+```
+
+We also want to save the plot as a `.png` file. We use the function `ggsave()`.
+We could (manually) add this image to a PowerPoint presentation. We could also
+modify this code to generate the PowerPoint slide deck...
+
+```{r savePng}
+ggsave(plt, file=fi, width=9.0, height=6.0, units="in", dpi=300)
+```
