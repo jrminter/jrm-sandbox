@@ -1,0 +1,115 @@
+---
+title: "Test Report Pkg"
+author: "John Minter"
+date: "4/29/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = NA)
+```
+
+# Introduction
+
+`Report` - from R to manuscript
+
+report’s primary goal is to bridge the gap between R’s output and the
+formatted results contained in your manuscript. It automatically produces
+reports of models and dataframes according to best practice guidelines
+(e.g., APA’s style guide), ensuring standardization and quality in results
+reporting.
+
+# To install
+
+```
+install.packages("devtools")
+install.packages("parameters")
+devtools::install_github("easystats/report")
+library(devtools)
+install_github("easystats/parameters")
+library("report")
+```
+
+# Test
+
+```{r loadPackages}
+library(report)
+library(parameters)
+library(dplyr)
+library(kableExtra)
+```
+
+## Example 1
+
+```{r exampleOne, comment=NA}
+model <- lm(Sepal.Length ~ Species, data=iris)
+report(model)
+```
+
+## Example 2
+
+These reports nicely work within the tidyverse workflow:
+
+```{r exampleTwo, comment=NA}
+# Correlation report
+cor.test(iris$Sepal.Length, iris$Petal.Length) %>% 
+  report()
+```
+
+## Example 3
+
+You can also create tables with the `table_short()` and `table_long()`
+functions. For example, create a table report for a linear model.
+We can use the `kable()` function from `KableExtra` to get a nicely
+formatted table.
+
+```{r exampleThree, comment=NA}
+kable(
+lm(Sepal.Length ~ Petal.Length + Species, data=iris) %>% 
+  report() %>% 
+  table_short()
+)
+```
+
+# Supported Packages
+
+Currently supported objects by report include `cor.test`, `t.test`,
+`correlation`, `glm`, `lme4::merMod`, `rstanarm::stanreg`, `modelbased`.
+
+## t-tests and correlations
+
+```{r exampleFour, comment=NA, warning=FALSE}
+t.test(mtcars$mpg ~ mtcars$am) %>% 
+  report()
+```
+
+
+# Miscellaneous
+
+## Report participants details
+
+```{r exampleFiveA, comment=NA, warning=FALSE}
+data <- data.frame("Age" = c(22, 23, 54, 21),
+                   "Sex" = c("F", "F", "M", "M"))
+```
+
+```
+Not even the dev version worked
+{r exampleFiveB}
+paste(report_participants(data, spell_n = TRUE),
+      "were recruited in the study by means of torture and coercion.")
+```
+The example above fails with
+```
+Error in UseMethod("format_value") : no applicable method for 'format_value' applied to an object of class "NULL"
+```
+
+
+# Credits
+
+If you like it, you can put a star on this repo, and cite the package
+as follows:
+
+Makowski & Lüdecke (2019). The report package for R: Ensuring the use of best practices for results reporting. CRAN.
+
+

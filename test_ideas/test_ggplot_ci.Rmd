@@ -1,0 +1,98 @@
+---
+title: "test_ggplot_ci"
+author: "John Minter"
+date: "4/30/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+A tip from Sandeep Gangarapu 
+
+1. Load the packages
+
+```{r loadPackages}
+library(ggplot2)
+library(here)
+```
+
+
+2. Generate some data
+
+```{r generateData}
+set.seed(20)
+p <- 0.5
+x <- seq(0,100, 5)
+y <- 0 + p*(x)^2
+noise <- rnorm(length(t), mean=10, sd=80)
+y_n <- y + noise
+df <- data.frame(x=x, y=y_n)
+summary(df)
+```
+
+2. Plot the generated data set
+
+```{r plotTheData}
+plt_gen <- ggplot(df, aes(x=x, y=y)) +
+           geom_point(aes(color="red")) +
+           NULL
+
+plt_gen
+```
+
+
+Try  a model. Got some of the info
+[here](https://datascienceplus.com/fitting-polynomial-regression-r/).
+
+```{r tryModel}
+model <- lm (df$y ~ df$x + I(x^2))
+summary(model)
+
+```
+
+```{r modelProbe}
+model$coefficients
+```
+
+Compute the predicted values and store them in a new dataframe 
+
+```{r modelPredict}
+x <- seq(0,100, 5)
+fit_vals <- data.frame(x=x)
+fit_vals$y <- predict(model, newdat=fit_vals)
+
+head(fit_vals)
+```
+
+```{r theTails}
+tail(fit_vals)
+```
+
+# Get the confidence interval
+
+```{r getCI}
+confint(model, level=0.95)
+```
+
+# Get the predicted intervals
+
+
+```{r calcPredInt}
+pred_ints <- predict(model, data.frame(x=x),
+                     interval='confidence', level=0.99)
+pred_ints
+
+```
+
+And it dies below...
+
+```{r plotIntervals}
+plt2 <- plt_gen +
+        geom_ribbon(aes(x = pred_ints$lwr,
+                        y = pred_ints$upr,
+                        alpha=0.2, fill="grey70")) +
+        NULL
+
+plt2
+```

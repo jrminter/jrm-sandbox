@@ -1,0 +1,66 @@
+---
+title: "Test Bad Data"
+author: "John Minter"
+date: "2020-04-30"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = NA)
+```
+
+From [stackoverflow](https://stackoverflow.com/questions/38470111/how-to-graph-with-geom-ribbon).
+Posted 2016-07-20.
+
+```{r loadPackages}
+library(ggplot2)
+```
+
+```{r loadData}
+Upper_Bound <- read.table(text =
+                          "Q      C   
+                           1     30  
+                           2     50  
+                           3     40", header=T)
+
+Lower_Bound <- read.table(text = 
+                          "Q      C       
+                           1     10   
+                           2     15     
+                           3     20", header=T) 
+
+Bad_Data <- read.table(text = 
+                      "Q      C      Name  
+                       1      50     Sample1  
+                       2      40     Sample1  
+                       3      30     Sample1  
+                       1      0      Sample2  
+                       2      60     Sample2  
+                       3      5      Sample2", header=T)
+
+
+Bad_Data
+```
+
+# Prepare
+
+```{r prepData}
+Bad_Data$Lower_Bound <- Lower_Bound$C
+Bad_Data$Upper_Bound <- Upper_Bound$C
+```
+
+
+# Plot
+
+```{r plotBadData}
+p <- ggplot(Bad_Data, aes(x = Q, y = C, color=Name,
+                          group=Name)) +
+     geom_line() +
+     geom_ribbon(aes(ymin=Lower_Bound, ymax=Upper_Bound), 
+                 alpha=0.1,       #transparency
+                 linetype=1,      #solid, dashed or other line types
+                 colour="grey70", #border line color
+                 size=1,          #border line size
+                 fill="green")    #fill color
+p
+```
