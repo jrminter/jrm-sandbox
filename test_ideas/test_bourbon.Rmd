@@ -1,0 +1,68 @@
+---
+title: "Where does all the Bourbon come from?"
+author: "J. D. Long"
+date: "2020-04-30"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = NA)
+```
+
+From [twitter](https://twitter.com/CMastication/status/1256259572664336384)
+
+Posted 2020-05-01.
+
+```{r loadPackages, message=FALSE}
+library(tmap)
+library(spData)
+library(tidyverse)
+```
+
+We will get the `spData` package to provide the `us_states` dataset.
+This is a Formal class 'sf. The data contains a data.frame with
+49 obs. of 7 variables:
+
+- `GEOID` character vector of geographic identifiers
+
+- `NAME` character vector of state names
+
+- `REGION` character vector of region names
+
+- `AREA` area in square kilometers of units class
+
+- `total_pop_10` numerical vector of `total population` in 2010
+
+- `total_pop_15` numerical vector of total population in 2015
+
+- `geometry` sfc_MULTIPOLYGON
+
+The object is in geographical coordinates using the `NAD83` datum.
+
+Note that we can get more date by installing a larger dataset.
+
+```
+install.packages('spDataLarge',
+                 repos='https://nowosad.github.io/drat/',
+                 type='source')
+```
+
+Let's show where Kentucky bourbon is produced.
+
+```{r loadModel}
+us_states %>%
+  mutate(Bourbon =
+           case_when(NAME =="Kentucky" ~ ">1",
+                     TRUE ~ "<1")) ->
+  us_states_bourbon
+
+tm_shape(us_states_bourbon) +
+  tm_fill(col = "Bourbon",
+          title = "Barrells per Capita") +
+  tm_style("col_blind") +
+  tm_layout(main.title = "Kentucky Bourbon Barrels per Capita by State",
+            main.title.position = "center" )
+
+```
+
+

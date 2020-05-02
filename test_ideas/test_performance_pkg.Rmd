@@ -1,0 +1,248 @@
+---
+title: "Test the `performance` Package"
+author: "Editor: John Minter"
+date: "2020-05-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment=NA)
+```
+
+# Introduction
+
+Load package libraries. We assume the `performance` package is installed.
+If not install it by `install.packages("performance")`. Documentation is
+[here](https://easystats.github.io/performance/).
+
+```{r loadPackages, message=FALSE}
+library(performance)
+library(MASS)
+library(rstanarm)
+library(lme4)
+library(brms)
+library(glmmTMB)
+library(see)
+```
+
+# Example 1 - R-squared
+
+`performance` has a generic `r2()` function, which computes the r-squared for
+many different models, including mixed effects and Bayesian regression
+models.
+
+`r2()` returns a list containing values related to the “most appropriate”
+r-squared for the given model.  See the example below:
+
+```{r Example1a}
+model <- lm(mpg ~ wt + cyl, data = mtcars)
+r2(model)
+```
+
+```{r Example1b}
+model <- glm(am ~ wt + cyl, data = mtcars, family = binomial)
+r2(model)
+```
+
+```{r Example1c}
+# This example required MASS
+data(housing)
+model <- polr(Sat ~ Infl + Type + Cont, weights = Freq, data = housing)
+r2(model)
+```
+
+The different r-squared measures can also be accessed directly via functions
+like `r2_bayes()`, `r2_coxsnell()` or `r2_nagelkerke()` (see a full list of functions [here](https://easystats.github.io/performance/reference/index.html)).
+
+For mixed models, the conditional and marginal r-squared are returned. The
+marginal r-squared considers only the variance of the fixed effects and
+indicates how much of the model’s variance is explained by the fixed effects
+part only. The conditional r-squared takes both the fixed and random effects
+into account and indicates how much of the model’s variance is explained by
+the “complete” model.
+
+For frequentist mixed models, `r2()` (resp. `r2_nakagawa()`) computes the
+mean random effect variances, thus `r2()` is also appropriate for mixed
+models with more complex random effects structures, like random slopes or
+nested random effects (Johnson 2014; Nakagawa, Johnson, and Schielzeth 2017).
+
+```{r ExampleStan1}
+# This required rstanarm
+model <- stan_glmer(Petal.Length ~ Petal.Width + (1 | Species), data = iris, cores = 4)
+r2(model)
+```
+
+```{r ExampleStan2}
+# This required lme4
+model <- lmer(Reaction ~ Days + (1 + Days | Subject), data = sleepstudy)
+r2(model)
+```
+
+# Example 2 - Intraclass Correlation Coefficient (ICC)
+
+Similar to r-squared, the ICC provides information on the explained variance
+and can be interpreted as “the proportion of the variance explained by the
+grouping structure in the population” (Hox 2010).
+
+`icc()` calculates the ICC for various mixed model objects, including stanreg models.
+
+```{r lmerMod2}
+# This required lme4)
+model <- lmer(Reaction ~ Days + (1 + Days | Subject), data = sleepstudy)
+icc(model)
+```
+
+For models of class` brmsfit`, an ICC based on variance decomposition is
+returned (for details, see the documentation).
+
+```{r brmsMod}
+# This required brms
+set.seed(123)
+model <- brm(mpg ~ wt + (1 | cyl) + (1 + wt | gear), data = mtcars)
+icc(model)
+```
+
+# Example 3 - Model diagnostics
+
+## Check for overdispersion
+
+Overdispersion occurs when the observed variance in the data is higher than
+the expected variance from the model assumption (for Poisson, variance
+roughly equals the mean of an outcome). `check_overdispersion()` checks if a
+count model (including mixed models) is overdispersed or not.
+
+```{r OverDisp1}
+# This required glmmTMB
+data(Salamanders)
+model <- glm(count ~ spp + mined, family = poisson, data = Salamanders)
+check_overdispersion(model)
+```
+
+Overdispersion can be fixed by either modelling the dispersion parameter
+(not possible with all packages), or by choosing a different distributional
+family [like Quasi-Poisson, or negative binomial, see (Gelman and Hill
+2007).
+
+## Check for zero-inflation
+
+Zero-inflation (in (Quasi-)Poisson models) is indicated when the amount of observed zeros is larger than the amount of predicted zeros, so the model is underfitting zeros. In such cases, it is recommended to use negative binomial or zero-inflated models.
+
+Use check_zeroinflation() to check if zero-inflation is present in the fitted model.
+
+```{r ZeroInf1}
+model <- glm(count ~ spp + mined, family = poisson, data = Salamanders)
+check_zeroinflation(model)
+```
+
+## Check for singular model fits
+
+A “singular” model fit means that some dimensions of the variance-covariance
+matrix have been estimated as exactly zero. This often occurs for mixed
+models with overly complex random effects structures.
+
+`check_singularity()` checks mixed models (of class lme, merMod, glmmTMB or
+MixMod) for singularity, and returns TRUE if the model fit is singular.
+
+```{r lem4Sleep}
+# this requires lme4
+data(sleepstudy)
+
+# prepare data
+set.seed(123)
+sleepstudy$mygrp <- sample(1:5, size = 180, replace = TRUE)
+sleepstudy$mysubgrp <- NA
+for (i in 1:5) {
+    filter_group <- sleepstudy$mygrp == i
+    sleepstudy$mysubgrp[filter_group] <- sample(1:30, size = sum(filter_group), replace = TRUE)
+}
+
+# fit strange model
+model <- lmer(Reaction ~ Days + (1 | mygrp/mysubgrp) + (1 | Subject), data = sleepstudy)
+
+check_singularity(model)
+```
+
+Remedies to cure issues with singular fits can be found
+[here](https://easystats.github.io/performance/reference/check_singularity.html).
+
+
+# Comprehensive model check
+
+**performance** provides many functions to check model assumptions, like
+`check_collinearity()`, `check_normality()` or `check_heteroscedasticity()`.
+
+To get a comprehensive check, use `check_model()`.
+
+```{r checkModel1}
+model <- lm(mpg ~ wt * cyl + gear, data = mtcars)
+check_model(model)
+```
+
+# Model performance summaries
+
+model_performance() computes indices of model performance for regression
+models. Depending on the model object, typical indices might be `r-squared`,
+`AIC`, `BIC`, `RMSE`, `ICC` or `LOOIC`.
+
+
+## Linear model
+
+```{r checkLmM1}
+m1 <- lm(mpg ~ wt + cyl, data = mtcars)
+model_performance(m1)
+```
+
+
+## Logistic regression
+
+```{r checkgLM2}
+m2 <- glm(vs ~ wt + mpg, data = mtcars, family = "binomial")
+model_performance(m2)
+```
+
+
+## Linear mixed model
+
+```{r checkgLM3}
+library(lme4)
+m3 <- lmer(Reaction ~ Days + (1 + Days | Subject), data = sleepstudy)
+model_performance(m3)
+```
+
+
+# Comparing different models
+
+```{r compM4}
+counts <- c(18, 17, 15, 20, 10, 20, 25, 13, 12)
+outcome <- gl(3, 1, 9)
+treatment <- gl(3, 3)
+m4 <- glm(counts ~ outcome + treatment, family = poisson())
+
+compare_performance(m1, m2, m3, m4)
+```
+
+# Comparing different models, ordered by model performance
+
+```{r compM4a}
+compare_performance(m1, m2, m3, m4, rank = TRUE)
+plot(compare_performance(m1, m2, m3, m4, rank = TRUE))
+```
+
+# References
+
+Gelman, Andrew, and Jennifer Hill. 2007. Data Analysis Using Regression and Multilevel/Hierarchical Models. Analytical Methods for Social Research. Cambridge ; New York: Cambridge University Press.
+
+Hox, J. J. 2010. Multilevel Analysis: Techniques and Applications. 2nd ed. Quantitative Methodology Series. New York: Routledge.
+
+Johnson, Paul C. D. 2014. “Extension of Nakagawa & Schielzeth’s R2 GLMM to Random Slopes Models.” Edited by Robert B. O’Hara. Methods in Ecology and Evolution 5 (9): 944–46. https://doi.org/10.1111/2041-210X.12225.
+
+Nakagawa, Shinichi, Paul C. D. Johnson, and Holger Schielzeth. 2017. “The Coefficient of Determination R2 and Intra-Class Correlation Coefficient from Generalized Linear Mixed-Effects Models Revisited and Expanded.” Journal of the Royal Society Interface 14 (134): 20170213. https://doi.org/10.1098/rsif.2017.0213.
+
+License: GPL-3
+
+Developers:
+
+- Daniel Lüdecke (Author, maintainer) 
+- Dominique Makowski (Author, contributor) 
+- Philip Waggoner (Author, contributor) 
+- Indrajeet Patil (Author, contributor)
