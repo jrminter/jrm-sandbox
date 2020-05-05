@@ -1,0 +1,47 @@
+---
+title: "US and Canada Apple Mobility Data"
+author: "John Minter"
+date: "2020-05-04"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = NA)
+```
+
+<style type="text/css">
+.main-container {
+  max-width: 750px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+```{r loadPackages, message=FALSE}
+library(readr)
+library(dplyr)
+library(tidyr)
+library(lubridate)
+library(ggplot2)
+```
+
+Get data [here](https://www.apple.com/covid19/mobility).
+
+```{r getData, message=FALSE, warning=FALSE}
+# from the downloaded apple mobiblity data of the day
+mobl <- read_csv("applemobilitytrends-2020-05-03.csv")
+# colums added for each day, so get number of coluns in current data
+extant <- ncol(mobl)
+```
+
+```{r plotdata, fig.width=7.5, fig.height=5.0, message=FALSE, warning=FALSE}
+# graph specific choices
+wanted_regions <- c("United States", "Canada")
+wanted_modes <- c("driving", "walking")
+mobl %>%
+  filter(region %in% wanted_regions, transportation_type %in% wanted_modes) %>%
+  gather(key=Date, value=usage, 5:extant) %>%
+  mutate(Date = ymd(Date)) %>%
+  ggplot(aes(x=Date, y=usage, colour=region, linetype=transportation_type)) +
+  geom_line() + theme_minimal()
+```
