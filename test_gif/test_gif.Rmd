@@ -1,0 +1,50 @@
+---
+title: "TestGif"
+author: "John Minter"
+date: "5/15/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+These are images downloaded from `giphy.com`
+
+# A known working example
+
+One can use a link to the site... That looks like this:
+
+```
+https://media.giphy.com/media/xUOxf7XfmpxuSode1O/giphy.gif
+```
+
+
+![dancing - from url](https://media.giphy.com/media/xUOxf7XfmpxuSode1O/giphy.gif)
+
+These are images downloaded as `.gif` files
+
+![dancing - from gif file](img/dancing.gif)
+
+
+![](img/miss_piggy.gif)
+
+![What](img/rodney.gif)
+
+![Three Amigos](img/three_amigos.gif)
+
+
+![Favorite Muppets](img/muppets_library.gif)
+
+
+![meh](img/meh.gif)
+
+![R. Lee Ermy](img/ermy.gif)
+
+
+![Picard Face Palm](img/picard.gif)
+
+![Release the hounds](img/hounds.gif)
+
+
+![Tired Dog](img/tired_dog.gif)

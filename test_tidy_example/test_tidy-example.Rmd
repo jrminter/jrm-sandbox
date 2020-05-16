@@ -1,0 +1,40 @@
+---
+title: "Test Tidy Example"
+author: "John Minter"
+date: "5/11/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = NA)
+```
+
+```{r loadLib}
+library(tidyverse)
+```
+
+By species
+
+```{r bySpecies}
+by_species <- iris %>%
+  group_by(Species) %>%
+  nest()
+```
+
+Specific models
+
+```{r specificModels}
+specific_models <- tibble(
+  Species = unique(iris$Species),
+                   model = list(function(d) lm(Sepal.Length ~ Petal.Width + Petal.Length, d),
+                                function(d) lm(Sepal.Length ~ Petal.Width, d),
+                                function(d) lm(Sepal.Length ~ Sepal.Width + Petal.Length, d))
+)
+
+left_join(by_species, specific_models) %>%
+  rowwise() %>%
+  summarize(fit = list(model(data)),
+            fit = list(broom::tidy(fit))) %>%
+  unnest(fit)
+
+```

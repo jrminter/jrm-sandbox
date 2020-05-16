@@ -1,0 +1,132 @@
+---
+title: "rFlair"
+author: "Kelly Bodwin"
+date: "2020-05-04"
+output:
+  html_document:
+    css: ./theme/jm-gray-vignette.css
+    number_sections: yes
+    toc: yes
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = NA)
+```
+
+
+<style type="text/css">
+.main-container {
+  max-width: 750px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+```{r loadPackages, message=FALSE}
+library(readr)
+library(flair)
+library(here)
+library(dplyr)
+library(ggplot2)
+```
+
+It is my distinct pleasure today to introduce you to the `flair` package.
+
+The following is an example of the type of classroom disaster that motivated
+this package:
+
+You are presenting an analysis to a class or audience, and you turn to a slide
+where you show both source code and its output. Because you wanted to emphasize
+a line of the source code, you copy-pasted the code text into the slide, and
+added highlighting to the relevant section.
+
+Upon opening the slide, you realize with creeping horror that you made a change
+in the source code, but you forgot to edit your slide. The code text displayed
+on your screen no longer matches the output, and your students are confused.
+
+Was this relatable? Have you, too, lived out this horror story?
+
+This kind of un-reproducibility of materials, and the simple frustration of the
+fiddly nature of manually highlighting code text, led me to develop flair.
+I wrote this package first and foremost for educators, although I have found 
+it equally useful for conference talks and workshops.
+
+You can find the basic package documentation and vignettes at this site. Today,
+though, I want to take the time to show you a few of my favorite examples of
+flair in action, to give you an idea of how it might be useful in your classroom
+or presentation.
+
+These examples all use the baby_names dataset from 
+[here](https://www.kaggle.com/kaggle/us-baby-names), which contains counts of
+babies born with each given name, in each state, since the 1800s. We’ll restrict
+our data only to babies born in California with the first name “Kelly”. You can
+download this data to follow along.
+
+Example 1: Emphasize small differences in code.
+
+The most default ability of flair is quickly adding basic highlighting to code.
+
+There are a lot of use cases of this simple functionality. I am particularly
+fond of using the `flair()` function to show how small changes in code impact
+the output.
+
+For example, suppose I am teaching the concept of geometries in ggplot. I wish
+to plot the number of babies born each year with the name “Kelly” in California,
+colored by gender assigned at birth.
+
+I have made two different plots; one using columns, and one using lines. The
+code chunk for my work looks like this:
+
+
+```{r loadDataset}
+
+# pa <- paste0(here::here(), "/nyc_baby_names.csv")
+pa <- paste0(here::here(), "/kelly_ca.csv")
+pa
+
+baby_names <- read_csv(pa)
+# names(df)[1]<-paste("Year")
+names(baby_names)
+```
+
+Plot the distribution
+
+```{r geoms, include=FALSE}
+baby_names %>%
+  ggplot(aes(x = Year, y = Count, fill = Gender)) +
+  geom_col()
+
+baby_names %>%
+  ggplot(aes(x = Year, y = Count, color = Gender)) +
+  geom_line()
+```
+
+
+With the decorate and flair functions, I can trigger this code chunk to be
+evaluated, while simultaneously adding highlighting to the chosen parts of my
+code.
+
+Ordinarily, we would use echo = FALSE on the first chunk below, so as not to
+see the `flair()` process.
+
+```{r foo}
+decorate("geoms") %>%
+  flair("_col") %>%
+  flair("fill = ") %>%
+  flair("_line") %>%
+  flair("color = ")
+```
+
+
+And the plot
+
+```{r plotWithFlair1}
+baby_names %>%
+  ggplot(aes(x = Year, y = Count, fill = Gender)) +
+  geom_col()
+
+```
+
+
+

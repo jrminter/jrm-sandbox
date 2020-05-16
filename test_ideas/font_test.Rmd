@@ -1,0 +1,46 @@
+---
+title: "Font Test"
+author: "dlsweet"
+date: "October 18, 2017"
+output: 
+  pdf_document:
+    latex_engine: xelatex
+header-includes:
+  - \usepackage{fontspec}
+  - \setmainfont{FreeSans}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Purpose
+
+There was a post by user `dlsweet`  on
+[RStudio Community](https://community.rstudio.com/t/custom-fonts-in-rmarkdown-pdf/2098/2)
+concerning the YAML for a PDF document to specify fonts. The solutio was to
+include informtion in the `header-includes:` section of the YAML. The original
+used the font `Museo` which I do not have. To test, I tried `FreeSans`
+
+It is not clear how to download Adobe Fonts
+
+`dlsweet` reaponded to Mara Averick...
+
+> Thanks @mara, I didn't have to quite override them separately but you gave me
+> the idea to try moving my LaTex command into my YAML Header.
+
+
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

@@ -1,0 +1,43 @@
+---
+title: "test-ggplot-aes"
+author: "John Minter"
+date: "5/8/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment=NA)
+```
+
+```{r loadLibraries}
+library(ggplot2)
+```
+
+# Plot 1
+
+```{r plot1}
+ggplot(diamonds,
+       aes(x=carat, y=price, color=cut)) +
+       geom_point() + geom_smooth() +
+       labs(title="Scatterplot", x="Carat", y="Price") +
+       theme(axis.text=element_text(size=12),
+             axis.title=element_text(size=12),
+             # center the title
+             plot.title=element_text(hjust = 0.5)) +
+       NULL
+```
+
+# Plot2
+
+```{r plot2}
+ggplot(diamonds) +
+  geom_point(aes(x=carat, y=price, color=cut)) +
+  geom_smooth(aes(x=carat, y=price, color=cut)) +
+  labs(title="Scatterplot", x="Carat", y="Price") +
+  theme(axis.text=element_text(size=12),
+        axis.title=element_text(size=12),
+        # center the title
+        plot.title=element_text(hjust = 0.5)) +
+  NULL
+
+```
