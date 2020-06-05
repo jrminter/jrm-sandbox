@@ -1,0 +1,47 @@
+---
+title: "Test Galton"
+author: "John Minter"
+date: "6/5/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      message = FALSE,
+                      comment = NA)
+```
+
+Test the Galton Data
+
+```{r Two}
+library(UsingR)
+library(ggplot2)
+
+data(galton)
+
+library(dplyr)
+freqData <- galton  %>%  group_by(parent, child) %>% summarise(freq = n())
+
+# Plot data
+g <- ggplot(data=freqData, aes(x = parent, y = child)) +
+     geom_point(colour="red") +
+     geom_smooth(method = "lm", se = FALSE, color = "darkblue") +
+     xlab("parent height [in]") +
+     ylab("child height [in]") +
+     ggtitle("Francis Galton's Parent/Child height data (1880)") +
+     theme(axis.text=element_text(size=12),
+           axis.title=element_text(size=12),
+           # center the title
+          plot.title=element_text(hjust = 0.5)) +
+     NULL
+     
+print(g)
+
+
+ggsave("img/galton.png", width = 6, height = 6)
+
+
+
+
+```
+

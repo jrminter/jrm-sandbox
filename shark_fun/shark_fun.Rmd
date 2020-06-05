@@ -1,0 +1,27 @@
+---
+title: "shark fun"
+author: "John Minter"
+date: "5/21/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment=NA)
+```
+
+A fun example from
+[twitter](https://twitter.com/yoniceedee/status/1263457758881427458)
+
+```{r sharkFun}
+library(carbonace)
+
+family <- c('Baby', 'Mommy', 'Daddy','Grandma', 'Grandpa', 'Lets go hunt')
+
+for(f in family){
+  if(grepl('hunt', f)){
+    print(sprintf('%s!', f))
+  } else {
+    print(sprintf('%s shark doo doo doo ddo!', f))
+  }
+}
+```

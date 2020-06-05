@@ -1,0 +1,39 @@
+---
+title: "Test New ggplot2"
+author: "John Minter"
+date: "5/19/2020"
+output:
+  html_document:
+    css: ../theme/jm-gray-vignette.css
+    number_sections: yes
+    toc: yes
+    toc_depth: 3
+---
+
+Test the release of `ggplot2` v. 3.0.0.900 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r libTest1}
+library(ggplot2)
+
+ggplot(mpg, aes(displ, hwy, colour = class)) +
+  geom_point()
+```
+
+```{r libTest2}
+library(ggplot2)
+  ggplot() +
+  xlim(0, 5) +
+   geom_function(fun = ~ 10*exp(-5* .x +2))
+```
+
+```{r libTest3}
+library(ggplot2)
+ggplot() +
+  xlim(0, 5) +
+  geom_function(fun = ~ 10*exp(-5* .x +2)) +
+  scale_y_log10()
+```

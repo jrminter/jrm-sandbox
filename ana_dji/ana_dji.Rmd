@@ -1,0 +1,30 @@
+---
+title: "Analyze DJI"
+author: "John Minter"
+date: "2020-05-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message=FALSE, comment=NA)
+```
+
+```{r get_stock_data_s_and_p}
+library(here)
+library(tidyverse)
+library(quantmod)
+bGetData <- TRUE
+pa <- paste0(here::here(), "/dji.csv")
+pa
+
+if(bGetData == TRUE){
+  start_date <- as.Date("2008-01-02")
+  end_date <- as.Date("2020-05-08")
+  getSymbols("DJI", src = "yahoo", from = start_date, to = end_date)
+  barChart(DJI)
+  write.zoo(DJI, pa, sep = ",") # There was a lot of missing data
+} else {
+  read_csv(pa)
+  head(dji)
+}
+```

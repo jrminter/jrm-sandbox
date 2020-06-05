@@ -1,0 +1,40 @@
+---
+title: "test_fig_path"
+author: "John Minter"
+date: "5/28/2020"
+output: html_document
+css: theme/jm-gray-vignette.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width=7.5)
+```
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax
+for authoring HTML, PDF, and MS Word documents. For more details on
+using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that
+includes both content as well as the output of any embedded R code
+chunks within the document. You can embed an R code chunk like this:
+
+```{r diamondPlot}
+library(ggplot2)
+# fig_path('.pdf', options = list(fig.path='./figure/abc-', label='first-summary'))
+plt <- ggplot(diamonds) +
+       geom_point(aes(x=carat, y=price, color=cut)) +
+       geom_smooth(aes(x=carat, y=price)) +
+       NULL
+plt
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

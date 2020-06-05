@@ -1,0 +1,101 @@
+---
+title: "Analyze Titration"
+author: "John Minter"
+date: "2020-06-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message=FALSE, comment=NA)
+```
+
+Take as an example the Royal Australian Chemical Institute's (RACI)
+schools titration competition of 1997. In this competition, each of a
+team of three high school students is asked to measure the concentration
+of a solution of acetic acid, given a solution of sodium hydroxide and
+a solution of hydrochloric acid of known concentration.
+
+The members of the team use the hydrochloric acid solution to standardize
+the sodium hydroxide solution, which in turn is used to titrate the acetic
+acid solution. In table 1.2 are the results of one member of each of
+25 teams that participated in the competition in 1997 at the University
+of New South Wales, Sydney Australia. Although no one is spot on, there
+are some very near misses and some pretty woeful answers (e.g., 0.9083M).
+We know that the students were not given enough sodium hydroxide to
+titrate 25 mL of 0.9083 M acetic acid, so we can confidently say that
+this is a gross error in calculation or recording the result.
+
+Plotting the results in increasing order of magnitude reveals some
+interesting groupings (figure 1.2). The high result is clearly off
+the planet, as can be seen from figure 1.2, but we will show that six
+other results can also be classed as outliers by methods we explain in
+chapter 3. The remaining data are shown to group around the accepted
+answer, and within limits of an expected random scatter, calculated
+from an analysis like the one above for the pipette, but covering all
+sources of uncertainty. Out of the 25 results, seven are rejected
+as gross errors and of the remainder seven fall above and 11 fall
+below the correct answer. Plotting a histogram, a bar chart of
+how many results fall within given ranges, reveals the distinction
+between the random error and the outliers. (JRM note: I used R and
+ggplot2 to do this analysis from the tabulated data)
+
+
+D. Brynn Hibbert;J. Justin Gooding. Data Analysis for Chemistry:
+An Introductory Guide for Students and Laboratory Scientists (p. 28).
+Kindle Edition. 
+
+# Load Packages
+
+```{r loadPackages, message=FALSE}
+library(readr)
+library(here)
+library(ggplot2)
+library(kableExtra)
+
+pa <- paste0(here::here(), "/dat/1997_RACI_Titration.csv")
+df <- as.data.frame(read_csv(pa))
+```
+Note an obvious outlier by student 14.
+
+```{r printData}
+print(df, row.names = FALSE)
+```
+
+Remove the outlier by setting the value to `NA`
+
+```{r removeOutlier}
+df$M[14] <- NA
+```
+
+Plot the distribution
+
+```{r removeBigOutlier, warning=FALSE}
+
+xMin = 0.09
+xMax = 0.12
+deltaX = 0.01
+
+yMin = 0.0
+yMax = 6.0
+deltaY = 0.5
+
+plt2 <- ggplot(df, aes(x=df$M)) +
+        geom_histogram(binwidth=0.0005,
+                       color="gray",
+                       fill="darkblue") +
+        xlab("concentration [M]") +
+        ylab("counts") +
+        scale_x_continuous(breaks = seq(from=xMin, to=xMax, by=deltaX),
+                           limits = c(xMin, xMax)) +
+        scale_y_continuous(breaks = seq(from=yMin, to=yMax, by=deltaY),
+                           limits = c(yMin, yMax)) +
+        ggtitle("1997 RACI Titration Competition (1 gross outlier removed)") +
+        theme(axis.text=element_text(size=12),
+              axis.title=element_text(size=12),
+              plot.title=element_text(hjust = 0.5)) + # center the title
+        NULL
+print(plt2)
+
+```
+
+
