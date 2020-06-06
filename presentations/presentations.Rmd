@@ -1,7 +1,8 @@
 ---
 title: Presentation Rules
 author: jilles.net
-theme: flatly
+theme: readable
+css: jm-gray-vignette.css
 # vim: set ts=2 sw=2 tw=80 ft=markdown et si :
 layout: post
 disable_comments: false
@@ -13,7 +14,7 @@ categories:
 - Business
 ---
 
-From [here](http://www.jilles.net/perma/2020/06/05/presentation-rules.html).
+From [Here](http://www.jilles.net/perma/2020/06/05/presentation-rules.html).
 
 Invariably my work requires to create and consume various presentations of
 differing nature. I also spend a reasonable amount of time learning, and
@@ -32,6 +33,7 @@ communications in a business
 organization
 
 # Rules
+
 1. **No Builds**.
 No presentation needs builds or animations, no exceptions. In business this will
 invariably go wrong. Your audience will ask to go back a slide or two, you end
